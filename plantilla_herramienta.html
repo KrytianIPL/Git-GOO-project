@@ -161,6 +161,29 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 @media(min-width:640px){.corr-head .ch-sku{font-size:15.5px}.prog-big{font-size:30px}}
 .exp-btn{background:var(--go-dim);border:1px solid var(--go);color:#7fe9bf;font-size:11px;font-weight:700;padding:7px 11px;border-radius:8px;cursor:pointer;font-family:'Inter';white-space:nowrap}
 .exp-btn:active{background:#0f3328}
+.carga-btn{background:var(--fija-dim);border:1px solid var(--fija);color:#bfe0ff;font-size:11px;font-weight:700;padding:7px 11px;border-radius:8px;cursor:pointer;font-family:'Inter';white-space:nowrap}
+.carga-btn:active{background:#0d1e2e}
+/* ===== Overlay de carga de datos ===== */
+.upload-overlay{position:fixed;inset:0;z-index:100;background:rgba(10,14,18,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.upload-overlay.open{opacity:1;pointer-events:all}
+.upload-panel{background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:28px 24px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:18px}
+.up-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:18px}
+.up-title small{display:block;font-family:'Inter';font-weight:400;font-size:12px;color:var(--ink3);margin-top:4px}
+.up-file{display:flex;flex-direction:column;gap:8px}
+.up-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.up-drop{border:1.5px dashed var(--line2);border-radius:11px;padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--panel2);transition:border-color .15s}
+.up-drop:hover,.up-drop.has-file{border-color:var(--go)}
+.up-drop input{display:none}
+.up-drop .ud-ico{font-size:20px;flex:0 0 auto}
+.up-drop .ud-txt{flex:1;min-width:0}
+.up-drop .ud-name{font-family:'JetBrains Mono';font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up-drop .ud-hint{font-size:10.5px;color:var(--ink3);margin-top:2px}
+.up-actions{display:flex;align-items:center;gap:12px}
+.up-run{background:var(--go);border:none;color:#0e1419;font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;padding:12px 20px;border-radius:10px;cursor:pointer;flex:1}
+.up-run:disabled{opacity:.4;cursor:not-allowed}
+.up-cancel{background:transparent;border:1px solid var(--line2);color:var(--ink2);font-size:13px;padding:12px 16px;border-radius:10px;cursor:pointer;font-family:'Inter'}
+.up-status{font-size:12px;font-family:'JetBrains Mono';color:var(--ink2);min-height:16px}
+.up-status.ok{color:var(--go)}.up-status.err{color:var(--A)}
 
 /* ===== Pestañas ===== */
 .tabs{display:flex;gap:6px;margin-top:13px}
@@ -204,6 +227,7 @@ body.tab-compactar .foot{display:none}
     <div class="top-row">
       <div class="brand">ÓRDENES DE <span>REABASTO</span><small>Mezzanine · Cliente GOO · por corrida</small></div>
       <div style="display:flex;gap:8px">
+        <button class="carga-btn" id="cargaBtn">⬆ Cargar datos</button>
         <button class="exp-btn" id="exportBtn">⬇ Exportar Excel</button>
         <button class="reset-btn" id="resetBtn">Reiniciar</button>
       </div>
@@ -274,6 +298,32 @@ body.tab-compactar .foot{display:none}
   <div class="cbar" id="cbar"></div>
   <div class="list" id="clist"><div class="load">Cargando análisis de compactación...</div></div>
 </div><!-- /view-compactar -->
+
+<!-- ===== Overlay: cargar datos actualizados ===== -->
+<div class="upload-overlay" id="uploadOverlay">
+  <div class="upload-panel">
+    <div class="up-title">Cargar datos actualizados<small>Sube los dos Excel para recalcular reabasto y compactación directamente en el navegador, sin ejecutar el script.</small></div>
+    <div class="up-file">
+      <div class="up-lbl">1 · Inventario completo</div>
+      <div class="up-drop" id="dropInv"><input type="file" id="fileInv" accept=".xlsx,.xls">
+        <span class="ud-ico">📦</span>
+        <span class="ud-txt"><span class="ud-name" id="nameInv">Seleccionar archivo…</span><span class="ud-hint">Para_analisis_de_GOO_proyecto.xlsx</span></span>
+      </div>
+    </div>
+    <div class="up-file">
+      <div class="up-lbl">2 · Pendiente por pick <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(opcional)</span></div>
+      <div class="up-drop" id="dropPend"><input type="file" id="filePend" accept=".xlsx,.xls">
+        <span class="ud-ico">📋</span>
+        <span class="ud-txt"><span class="ud-name" id="namePend">Omitir o seleccionar…</span><span class="ud-hint">Analisis_de_progreso_ABC_GOO.xlsx — agrega descripciones</span></span>
+      </div>
+    </div>
+    <div class="up-actions">
+      <button class="up-run" id="runBtn" disabled>Procesar</button>
+      <button class="up-cancel" id="cancelBtn">Cancelar</button>
+    </div>
+    <div class="up-status" id="upStatus"></div>
+  </div>
+</div>
 
 <div class="foot">
   <div class="foot-in">
@@ -825,6 +875,175 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', ()=>{
   await loadState();
   updateProgress();
   render();
+})();
+
+// ====== Cargar datos actualizados (client-side, sin script Python) ======
+function _esPiso(area, ubicacion){
+  if(String(area??'').trim()==='MEZZANINE BINS') return true;
+  const u=String(ubicacion??'').trim().toUpperCase();
+  return u.startsWith('MZ06')&&u.endsWith('-01');
+}
+function _pasillo(ubic){ const u=String(ubic??'').toUpperCase(); return u.includes('-')?u.split('-')[0]:u; }
+function _corrida(sku){ const s=String(sku??''); const i=s.lastIndexOf('-'); return i>=0?s.slice(0,i):s; }
+function _talla(sku){ const s=String(sku??''); const i=s.lastIndexOf('-'); return i>=0?s.slice(i+1):''; }
+
+function recomputeReabasto(invRows, pendRows){
+  const req={A:2,B:1};
+  invRows.forEach(r=>{
+    r._tipo=String(r['Tipo (ABC)']??'').trim();
+    r._area=String(r['Area']??'').trim();
+    r._ubic=String(r['Ubicación']??'').trim();
+    r._cid=String(r['CID']??'').trim();
+    r._piso=_esPiso(r._area,r._ubic);
+    r._corrida=_corrida(String(r['Producto']??'').trim());
+    r._saldo=Number(r['Saldo'])||0;
+  });
+  const descPend={};
+  pendRows.forEach(r=>{ const p=String(r['Producto']??'').trim(); if(p&&r['Descripción']) descPend[p]=String(r['Descripción']); });
+  const grupos=[];
+  ['A','B'].forEach(tipo=>{
+    const sub=invRows.filter(r=>r._tipo===tipo);
+    const needed=req[tipo];
+    const byCorr={};
+    sub.forEach(r=>{ (byCorr[r._corrida]=byCorr[r._corrida]||[]).push(r); });
+    Object.keys(byCorr).forEach(corr=>{
+      const gc=byCorr[corr];
+      // destino
+      const ubicMap={};
+      gc.filter(r=>r._piso).forEach(r=>{ if(!ubicMap[r._ubic]) ubicMap[r._ubic]=new Set(); ubicMap[r._ubic].add(r._cid); });
+      const ubicArr=Object.entries(ubicMap).map(([u,s])=>({u,n:s.size})).sort((a,b)=>b.n-a.n);
+      let destino,estado,dispersas;
+      if(ubicArr.length===1){destino=ubicArr[0].u;estado='fija';dispersas=[];}
+      else if(ubicArr.length>1){destino=ubicArr[0].u;estado='consolidar';dispersas=ubicArr.map(e=>e.u);}
+      else{destino=null;estado='nueva';dispersas=[];}
+      // cajas que faltan por producto
+      const byProd={};
+      gc.forEach(r=>{ const p=String(r['Producto']??'').trim(); (byProd[p]=byProd[p]||[]).push(r); });
+      const faltanPT={};
+      Object.keys(byProd).forEach(prod=>{
+        const gp=byProd[prod];
+        const pbins=new Set(gp.filter(r=>r._piso).map(r=>r._cid)).size;
+        const falta=Math.max(0,needed-pbins);
+        if(falta>0&&gp.filter(r=>!r._piso&&r._area==='MEZZANINE RACK').length>0) faltanPT[prod]=falta;
+      });
+      if(!Object.keys(faltanPT).length) return;
+      // rack de esta corrida
+      const rackCorr=gc.filter(r=>!r._piso&&r._area==='MEZZANINE RACK');
+      // ¿hay una ubicación de altura con la corrida completa?
+      const byUbicRack={};
+      rackCorr.forEach(r=>{ (byUbicRack[r._ubic]=byUbicRack[r._ubic]||[]).push(r); });
+      let ubicCompleta=null;
+      for(const [ubic,gu] of Object.entries(byUbicRack)){
+        const byPU={};
+        gu.forEach(r=>{ const p=String(r['Producto']??'').trim(); if(!byPU[p]) byPU[p]=new Set(); byPU[p].add(r._cid); });
+        if(Object.keys(faltanPT).every(prod=>(byPU[prod]?.size||0)>=faltanPT[prod])){ ubicCompleta=ubic; break; }
+      }
+      // seleccionar cajas
+      const cajas=[];
+      Object.entries(faltanPT).forEach(([prod,falta])=>{
+        const pr=rackCorr.filter(r=>String(r['Producto']??'').trim()===prod);
+        const cands=ubicCompleta!==null?pr.filter(r=>r._ubic===ubicCompleta):pr;
+        const byCid={};
+        cands.forEach(r=>{ if(!byCid[r._cid]||r._saldo>byCid[r._cid].saldo) byCid[r._cid]={cid:r._cid,saldo:r._saldo,ubic:r._ubic}; });
+        Object.values(byCid).sort((a,b)=>b.saldo-a.saldo).slice(0,falta).forEach(c=>{
+          cajas.push({sku:prod,talla:_talla(prod),origen:c.ubic,pasillo:_pasillo(c.ubic),cid:c.cid,uds:c.saldo});
+        });
+      });
+      if(!cajas.length) return;
+      cajas.sort((a,b)=>a.pasillo!==b.pasillo?a.pasillo.localeCompare(b.pasillo):a.origen!==b.origen?a.origen.localeCompare(b.origen):b.uds-a.uds);
+      const pasilloOrigen=cajas.map(c=>c.pasillo).reduce((a,b)=>a<=b?a:b);
+      grupos.push({corrida:corr,tipo,desc:descPend[cajas[0].sku]||'',destino,estado,ubic_dispersas:dispersas,
+        n_cajas:cajas.length,uds:cajas.reduce((a,c)=>a+c.uds,0),completa_en:ubicCompleta,pasillo_origen:pasilloOrigen,cajas});
+    });
+  });
+  grupos.sort((a,b)=>{
+    const ta=a.tipo==='A'?0:1,tb=b.tipo==='A'?0:1;
+    if(ta!==tb) return ta-tb;
+    if(a.pasillo_origen!==b.pasillo_origen) return a.pasillo_origen.localeCompare(b.pasillo_origen);
+    return a.corrida.localeCompare(b.corrida);
+  });
+  return grupos;
+}
+
+(function(){
+  const overlay=document.getElementById('uploadOverlay');
+  const cargaBtn=document.getElementById('cargaBtn');
+  const cancelBtn=document.getElementById('cancelBtn');
+  const runBtn=document.getElementById('runBtn');
+  const statusEl=document.getElementById('upStatus');
+  if(!overlay||!cargaBtn) return;
+  let invRows=null, pendRows=null;
+  const openOverlay=()=>overlay.classList.add('open');
+  const closeOverlay=()=>overlay.classList.remove('open');
+  cargaBtn.addEventListener('click',openOverlay);
+  cancelBtn.addEventListener('click',closeOverlay);
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) closeOverlay(); });
+
+  function readFile(f,nameEl,dropEl,sheetHints,onRows){
+    if(typeof XLSX==='undefined'){ statusEl.className='up-status err'; statusEl.textContent='SheetJS no disponible (sin conexión a internet).'; return; }
+    nameEl.textContent='Leyendo…';
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
+        let wsName=wb.SheetNames[0];
+        if(sheetHints){ const found=sheetHints.find(h=>wb.SheetNames.includes(h)); if(found) wsName=found; }
+        const rows=XLSX.utils.sheet_to_json(wb.Sheets[wsName],{defval:''});
+        onRows(rows);
+        nameEl.textContent=f.name+' ('+rows.length.toLocaleString('es')+' filas)';
+        dropEl.classList.add('has-file');
+        checkReady();
+      }catch(err){ nameEl.textContent='Error al leer'; statusEl.className='up-status err'; statusEl.textContent='No se pudo leer: '+(err.message||err); }
+    };
+    reader.readAsArrayBuffer(f);
+  }
+
+  function setupDrop(dropId,inputId,nameId,sheetHints,onRows){
+    const drop=document.getElementById(dropId),inp=document.getElementById(inputId),nameEl=document.getElementById(nameId);
+    drop.addEventListener('click',()=>inp.click());
+    drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('has-file');});
+    drop.addEventListener('dragleave',()=>{ if(!invRows&&!pendRows) drop.classList.remove('has-file'); });
+    drop.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f) readFile(f,nameEl,drop,sheetHints,onRows);});
+    inp.addEventListener('change',e=>{const f=e.target.files[0];if(f) readFile(f,nameEl,drop,sheetHints,onRows);inp.value='';});
+  }
+
+  function checkReady(){
+    runBtn.disabled=!invRows;
+    if(invRows){statusEl.className='up-status';statusEl.textContent=pendRows?'Listo para procesar.':'Listo (sin descripciones — el pendiente es opcional).';}
+  }
+
+  setupDrop('dropInv','fileInv','nameInv',null,rows=>{invRows=rows;});
+  setupDrop('dropPend','filePend','namePend',['Pendiente por pick','Pendiente por Pick','Pendiente por PICK'],rows=>{pendRows=rows;});
+
+  runBtn.addEventListener('click',()=>{
+    if(!invRows) return;
+    statusEl.className='up-status'; statusEl.textContent='Calculando…'; runBtn.disabled=true;
+    try{
+      const nuevosGrupos=recomputeReabasto(invRows,pendRows||[]);
+      GRUPOS.length=0; nuevosGrupos.forEach(x=>GRUPOS.push(x));
+      const nuevosComp=recomputeCompactar(invRows);
+      COMPACTAR.length=0; nuevosComp.forEach(x=>COMPACTAR.push(x));
+      // reset avance (datos nuevos)
+      doneBoxes={}; saveDone();
+      // reset UI
+      openCorr={}; filterF='all'; query=''; scanLoc='';
+      const si=document.getElementById('search'); if(si) si.value='';
+      const sc=document.getElementById('scan'); if(sc) sc.value='';
+      document.getElementById('scanClear').style.display='none';
+      [...document.querySelectorAll('#typeFilters .chip')].forEach(c=>c.classList.remove('on'));
+      document.querySelector('#typeFilters [data-f="all"]').classList.add('on');
+      _compRendered=false; cQuery=''; openProd={};
+      const csi=document.getElementById('csearch'); if(csi) csi.value='';
+      updateProgress(); render();
+      const totalCajas=nuevosGrupos.reduce((a,g)=>a+g.n_cajas,0);
+      statusEl.className='up-status ok';
+      statusEl.textContent='✓ '+nuevosGrupos.length+' corridas · '+totalCajas+' cajas · '+nuevosComp.reduce((a,p)=>a+p.n_comp,0)+' a compactar';
+      setTimeout(closeOverlay,2000);
+    }catch(err){
+      statusEl.className='up-status err'; statusEl.textContent='Error: '+(err.message||err);
+      runBtn.disabled=false;
+    }
+  });
 })();
 
 </script>

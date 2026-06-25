@@ -123,7 +123,9 @@ if os.path.exists(ruta(PLANTILLA_HERRAMIENTA)):
     UMBRAL_CAJAS = {'A': 2, 'B': 1}   # entra si tiene > umbral cajas EN MEZZANINE BINS
     compactar = []
     for prod, gp in inv.groupby('Producto'):
-        tipo = str(gp['Tipo'].mode().iloc[0]).strip()
+        tipo_mode = gp['Tipo'].mode()
+        if len(tipo_mode) == 0: continue
+        tipo = str(tipo_mode.iloc[0]).strip()
         if tipo not in UMBRAL_CAJAS:
             continue
         gp_bins = gp[gp['Area'] == 'MEZZANINE BINS']   # solo piso (BINS): ahi se compacta
