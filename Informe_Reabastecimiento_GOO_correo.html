@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto de Reabastecimiento Tipo A · Picking GOO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#ffffff; --ink:#13202a; --ink2:#475560; --hair:#e3e7ea; --soft:#f5f7f8;
+  --a:#c8412b; --a-soft:#fbeae6; --b:#d99a2b; --c:#3f8f6e;
+  --piso:#1d6fb8; --altura:#c8412b; --slate:#5a6a76;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+.mono{font-family:'Roboto Mono',monospace}
+.tnum{font-family:'Fraunces',Georgia,serif;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.topbar{border-bottom:1px solid var(--hair);padding:18px 0}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;font-size:14px;letter-spacing:.04em}
+.brand span{color:var(--a)}
+.meta{font-size:12px;color:var(--ink2);text-align:right}
+.hero{padding:64px 0 40px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--a);margin-bottom:20px}
+.hero h1{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:46px;line-height:1.12;letter-spacing:-.02em;max-width:880px;margin-bottom:22px}
+.hero h1 b{font-weight:600}
+.hero .lede{font-size:17px;color:var(--ink2);max-width:680px}
+.signature{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:40px;background:var(--soft);border-radius:18px;border:1px solid var(--hair);margin-top:40px}
+.sig-num{font-family:'Fraunces',Georgia,serif;font-size:108px;font-weight:500;line-height:.9;color:var(--a);letter-spacing:-.03em}
+.sig-label{font-size:15px;font-weight:600;margin-top:8px}
+.sig-sub{font-size:14px;color:var(--ink2);margin-top:10px;max-width:380px}
+.sig-pills{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.sig-pills .p{background:#fff;border:1px solid var(--hair);border-radius:8px;padding:10px 14px;font-size:13px}
+.sig-pills .p b{font-size:18px;display:block;color:var(--a)}
+.flow svg{width:100%;height:auto;display:block}
+section{padding:54px 0;border-top:1px solid var(--hair)}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.sec-no{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--a);font-weight:500}
+.sec-head h2{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:27px;letter-spacing:-.01em}
+.sec-intro{color:var(--ink2);font-size:15px;max-width:720px;margin-bottom:32px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:14px;overflow:hidden}
+.kpi{background:#fff;padding:24px}
+.kpi .v{font-family:'Fraunces',Georgia,serif;font-size:38px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.kpi .l{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);margin-top:10px}
+.kpi .d{font-size:13px;color:var(--slate);margin-top:6px}
+.kpi.accent .v{color:var(--a)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.cols-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.panel{border:1px solid var(--hair);border-radius:14px;padding:22px}
+.panel h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.panel .ph{font-size:13px;color:var(--ink2);margin-bottom:18px}
+.cw{position:relative;height:240px}
+.cw.tall{height:300px}
+.mtable{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.mtable th,.mtable td{padding:13px 14px;text-align:right;border-bottom:1px solid var(--hair)}
+.mtable th:first-child,.mtable td:first-child{text-align:left}
+.mtable thead th{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+.mtable tbody tr:last-child{font-weight:700;background:var(--soft)}
+.chip{display:inline-block;width:22px;text-align:center;border-radius:6px;padding:3px 0;font-size:12px;font-weight:700;color:#fff}
+.chip.A{background:var(--a)} .chip.B{background:var(--b)} .chip.C{background:var(--c)}
+.minibar{display:inline-block;height:8px;border-radius:4px;background:var(--piso);vertical-align:middle;margin-right:8px}
+.case{background:var(--ink);color:#eef3f6;border-radius:18px;padding:48px}
+.case .eyebrow{color:#ff8a72}
+.case h2{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:28px;color:#fff;margin:14px 0 28px;letter-spacing:-.01em}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#283742;border-radius:12px;overflow:hidden}
+.step{background:#1a2832;padding:26px}
+.step .stepn{font-family:'Roboto Mono',monospace;font-size:12px;color:#ff8a72;font-weight:500}
+.step h4{font-size:16px;font-weight:600;margin:10px 0 8px}
+.step p{font-size:13.5px;color:#9fb0bb;line-height:1.55}
+.case .outcome{margin-top:30px;display:flex;gap:40px;flex-wrap:wrap}
+.case .outcome div .v{font-family:'Fraunces',Georgia,serif;font-size:34px;color:#fff}
+.case .outcome div .l{font-size:13px;color:#9fb0bb;margin-top:4px}
+.impact-hero{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--hair);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.ba-side{padding:32px}
+.ba-side.before{background:var(--soft)}
+.ba-side.after{background:#eef6fb;border-left:1px solid var(--hair)}
+.ba-tag{font-family:'Roboto Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
+.ba-side.before .ba-tag{color:var(--slate)}
+.ba-side.after .ba-tag{color:var(--piso)}
+.ba-big{font-family:'Fraunces',Georgia,serif;font-size:62px;font-weight:500;line-height:.9;letter-spacing:-.03em}
+.ba-side.before .ba-big{color:var(--ink2)}
+.ba-side.after .ba-big{color:var(--piso)}
+.ba-cap{font-size:14px;color:var(--ink2);margin-top:10px;max-width:300px}
+.ba-track{height:14px;border-radius:7px;background:#dfe5e9;overflow:hidden;margin-top:22px;display:flex}
+.ba-fill{height:100%;background:var(--piso);transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.ba-fill.alt{background:var(--altura);flex:0 0 auto}
+.ba-legend{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.ba-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+.impact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.icard{border:1px solid var(--hair);border-radius:14px;padding:26px}
+.icard .iv{font-family:'Fraunces',Georgia,serif;font-size:44px;font-weight:500;letter-spacing:-.02em;line-height:1;color:var(--a)}
+.icard .il{font-size:14px;font-weight:600;margin-top:12px}
+.icard .id{font-size:13.5px;color:var(--ink2);margin-top:7px;line-height:1.5}
+.eq-note{display:flex;gap:14px;align-items:flex-start;background:var(--soft);border:1px solid var(--hair);border-radius:12px;padding:18px 20px;margin-top:24px;font-size:13.5px;color:var(--ink2);line-height:1.55}
+.eq-note b{color:var(--ink)}
+@media(max-width:880px){.impact-hero{grid-template-columns:1fr}.ba-side.after{border-left:none;border-top:1px solid var(--hair)}.impact-cards{grid-template-columns:1fr}}
+.alert-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:14px;overflow:hidden}
+.aflow{background:#fff;padding:24px;position:relative}
+.aflow .an{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--a);font-weight:500}
+.aflow h4{font-size:16px;font-weight:600;margin:10px 0 7px}
+.aflow p{font-size:13.5px;color:var(--ink2);line-height:1.55}
+.trigger{background:var(--ink);color:#eef3f6;border-radius:14px;padding:30px 32px;margin:24px 0}
+.trigger .te{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#ff8a72;font-weight:500;margin-bottom:12px}
+.trigger .tr{font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:400;line-height:1.4;max-width:46ch}
+.trigger .tr b{color:#ff8a72;font-weight:500}
+.trigger .tr .or{font-family:'Roboto Mono',monospace;font-size:14px;color:#9fb0bb;padding:0 4px}
+.atypes{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.atype{border:1px solid var(--hair);border-radius:14px;padding:22px;border-top:3px solid}
+.atype.A{border-top-color:var(--a)} .atype.B{border-top-color:var(--b)} .atype.C{border-top-color:var(--c)}
+.atype .ahd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.atype .achip{width:24px;height:24px;border-radius:7px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.atype.A .achip{background:var(--a)} .atype.B .achip{background:var(--b)} .atype.C .achip{background:var(--c)}
+.atype .awhen{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.atype .amsg{font-size:14px;color:var(--ink);background:var(--soft);border-radius:8px;padding:12px 14px;line-height:1.5}
+.atype .amsg b{font-weight:600}
+.atype .aact{font-size:13px;color:var(--ink2);margin-top:12px;line-height:1.5}
+.mock{border:1px solid var(--hair);border-radius:14px;overflow:hidden;margin-top:24px}
+.mockbar{background:var(--ink);color:#eef3f6;padding:12px 18px;font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.mockbar .dot{width:9px;height:9px;border-radius:50%;background:#ff8a72;box-shadow:0 0 0 4px rgba(255,138,114,.22)}
+.mrow{display:flex;align-items:center;gap:16px;padding:14px 18px;border-top:1px solid var(--hair);font-size:14px}
+.mrow:nth-child(even){background:var(--soft)}
+.mrow .mc{width:22px;text-align:center;border-radius:6px;padding:3px 0;font-size:12px;font-weight:700;color:#fff}
+.mrow .mc.A{background:var(--a)} .mrow .mc.B{background:var(--b)}
+.mrow .mp{font-family:'Roboto Mono',monospace;flex:1;color:var(--ink)}
+.mrow .ms{color:var(--a);font-weight:600;font-size:13px}
+.mrow .ma{font-size:13px;color:var(--ink2)}
+.future-badge{display:inline-block;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;background:var(--a-soft);color:var(--a);padding:5px 12px;border-radius:8px;margin-bottom:14px}
+.reabasto-hero{background:var(--ink);color:#eef3f6;border-radius:18px;padding:42px 48px;margin-bottom:24px;display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center}
+.corrida{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;border:1px solid var(--hair);border-radius:14px;padding:28px;margin-top:24px;background:var(--soft)}
+.avance-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.oid-global{display:flex;align-items:baseline;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.oid-global .og-big{font-family:'Fraunces',Georgia,serif;font-size:52px;font-weight:500;line-height:1;letter-spacing:-.02em;color:var(--piso)}
+.oid-global .og-txt{font-size:14px;color:var(--ink2);max-width:40ch}
+.oidlist{display:flex;flex-direction:column;gap:0;border:1px solid var(--hair);border-radius:14px;overflow:hidden}
+.oidrow{display:grid;grid-template-columns:64px 1.4fr 1fr 110px 50px;gap:16px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--hair)}
+.oidrow:last-child{border-bottom:none}
+.oidrow:nth-child(even){background:var(--soft)}
+.oidrow .oid-id{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--ink2)}
+.oidrow .oid-name{font-size:14px;font-weight:600;color:var(--ink)}
+.oidrow .oid-name small{display:block;font-weight:400;font-size:12px;color:var(--ink2);font-family:'Roboto Mono',monospace}
+.oidrow .oid-track{height:12px;border-radius:6px;background:#e3e7ea;overflow:hidden}
+.oidrow .oid-fill{height:100%;border-radius:6px}
+.oidrow .oid-units{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink2);text-align:right}
+.oidrow .oid-units b{color:var(--piso);font-weight:600}
+.oidrow .oid-pct{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:500;text-align:right;letter-spacing:-.01em}
+.oid-head{display:grid;grid-template-columns:64px 1.4fr 1fr 110px 50px;gap:16px;padding:10px 20px;font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-weight:500;background:var(--ink);color:#eef3f6}
+@media(max-width:880px){.oidrow,.oid-head{grid-template-columns:44px 1.2fr 0.8fr 70px 40px;gap:8px;font-size:12px}}
+.cumpl{background:var(--ink);color:#eef3f6;border-radius:16px;padding:32px 36px;margin-bottom:24px}
+.cumpl .cu-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.cumpl .cu-title{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9fb0bb}
+.cumpl .cu-big{font-family:'Fraunces',Georgia,serif;font-size:54px;font-weight:500;line-height:1;letter-spacing:-.02em;color:#fff}
+.cumpl .cu-big span{font-size:28px;color:#9fb0bb}
+.cumpl .cu-bar{height:18px;border-radius:9px;background:#283742;overflow:hidden;position:relative}
+.cumpl .cu-fill{height:100%;background:linear-gradient(90deg,#1d6fb8,#3f8f6e);border-radius:9px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.cumpl .cu-sub{font-size:13.5px;color:#9fb0bb;margin-top:14px;line-height:1.55}
+.cumpl .cu-sub b{color:#fff}
+.cumpl .cu-types{display:flex;gap:32px;margin-top:18px;flex-wrap:wrap}
+.cumpl .cu-t .cu-tv{font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:500;color:#fff}
+.cumpl .cu-t .cu-tl{font-size:12px;color:#9fb0bb;margin-top:2px}
+.avcard{border:1px solid var(--hair);border-radius:14px;padding:24px;border-top:3px solid}
+.avcard.A{border-top-color:var(--a)} .avcard.B{border-top-color:var(--b)} .avcard.tot{border-top-color:var(--piso)}
+.avcard .av-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.avcard .av-chip{width:26px;height:26px;border-radius:7px;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.avcard.A .av-chip{background:var(--a)} .avcard.B .av-chip{background:var(--b)} .avcard.tot .av-chip{background:var(--piso);font-size:11px}
+.avcard .av-lbl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.avcard .av-row{display:flex;align-items:baseline;gap:10px;font-family:'Fraunces',Georgia,serif;letter-spacing:-.02em}
+.avcard .av-from{font-size:30px;color:var(--ink2)}
+.avcard .av-arrow{font-family:'Roboto Mono',monospace;font-size:18px;color:var(--slate)}
+.avcard .av-to{font-size:42px;font-weight:500}
+.avcard.A .av-to{color:var(--a)} .avcard.B .av-to{color:var(--b)} .avcard.tot .av-to{color:var(--piso)}
+.avcard .av-unit{font-size:12.5px;color:var(--ink2);margin-top:4px}
+.avcard .av-delta{display:inline-block;margin-top:14px;font-family:'Roboto Mono',monospace;font-size:13px;font-weight:500;padding:5px 12px;border-radius:8px}
+.av-delta.down{background:#e3f0e9;color:#2d7a52}
+.av-delta.up{background:var(--a-soft);color:var(--a)}
+.avance-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:24px}
+.avance-table th,.avance-table td{padding:13px 16px;text-align:right;border-bottom:1px solid var(--hair)}
+.avance-table th:first-child,.avance-table td:first-child{text-align:left}
+.avance-table thead th{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+.avance-table tbody tr:last-child{font-weight:700;background:var(--soft)}
+.avance-table .pos{color:#2d7a52;font-weight:600} .avance-table .neg{color:var(--a);font-weight:600}
+.proy{background:var(--ink);color:#eef3f6;border-radius:16px;padding:32px 34px;margin-top:24px;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center}
+.proy .p-num{font-family:'Fraunces',Georgia,serif;font-size:64px;font-weight:500;line-height:.9;color:#7fd4a8;letter-spacing:-.02em;white-space:nowrap}
+.proy .p-num small{display:block;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#9fb0bb;margin-top:8px;letter-spacing:.02em}
+.proy .p-body .p-lead{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:400;line-height:1.35;color:#fff;margin-bottom:14px}
+.proy .p-body .p-lead b{color:#7fd4a8;font-weight:500}
+.proy .p-stats{display:flex;gap:28px;flex-wrap:wrap}
+.proy .p-stats .ps{font-size:13px;color:#9fb0bb}
+.proy .p-stats .ps b{display:block;font-family:'Fraunces',Georgia,serif;font-size:24px;color:#fff;font-weight:500;margin-bottom:2px}
+.proy-wait{background:var(--soft);border:1px dashed var(--hair);border-radius:14px;padding:26px 28px;margin-top:24px;display:flex;gap:16px;align-items:flex-start}
+.proy-wait .pw-ico{font-family:'Roboto Mono',monospace;font-size:22px;color:var(--b)}
+.proy-wait .pw-txt{font-size:14px;color:var(--ink2);line-height:1.55}
+.proy-wait .pw-txt b{color:var(--ink)}
+@media(max-width:880px){.proy{grid-template-columns:1fr;gap:18px;padding:26px}.proy .p-num{font-size:52px}}
+@media(max-width:880px){.avance-cards{grid-template-columns:1fr}}
+.corrida .co-txt h3{font-size:16px;font-weight:600;margin-bottom:10px}
+.corrida .co-txt p{font-size:14px;color:var(--ink2);line-height:1.6;margin-bottom:10px}
+.corrida .co-txt p b{color:var(--ink)}
+.corrida .co-stat{background:#fff;border:1px solid var(--hair);border-radius:12px;padding:24px;text-align:center}
+.corrida .co-stat .cs-row{display:flex;align-items:center;justify-content:center;gap:14px}
+.corrida .co-stat .cs-big{font-family:'Fraunces',Georgia,serif;font-size:52px;font-weight:500;line-height:1;letter-spacing:-.02em}
+.corrida .co-stat .cs-from{color:var(--ink2)} .corrida .co-stat .cs-to{color:var(--piso)}
+.corrida .co-stat .cs-arrow{font-family:'Roboto Mono',monospace;font-size:22px;color:var(--a)}
+.corrida .co-stat .cs-lbl{font-size:12.5px;color:var(--ink2);margin-top:12px;line-height:1.5}
+.corrida .co-stat .cs-cut{display:inline-block;margin-top:10px;font-family:'Roboto Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.04em;background:var(--a-soft);color:var(--a);padding:5px 12px;border-radius:8px}
+@media(max-width:880px){.corrida{grid-template-columns:1fr}}
+.reabasto-hero .rh-num{font-family:'Fraunces',Georgia,serif;font-size:110px;font-weight:500;line-height:.85;color:#ff8a72;letter-spacing:-.03em}
+.reabasto-hero .rh-txt .rh-lead{font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:400;line-height:1.35;color:#fff;margin-bottom:10px}
+.reabasto-hero .rh-txt .rh-sub{font-size:14px;color:#9fb0bb;max-width:46ch;line-height:1.55}
+.rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.rcard{border:1px solid var(--hair);border-radius:14px;padding:24px;border-top:3px solid}
+.rcard.A{border-top-color:var(--a)} .rcard.B{border-top-color:var(--b)} .rcard.C{border-top-color:var(--c)}
+.rcard .rc-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rcard .rc-chip{width:26px;height:26px;border-radius:7px;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.rcard.A .rc-chip{background:var(--a)} .rcard.B .rc-chip{background:var(--b)} .rcard.C .rc-chip{background:var(--c)}
+.rcard .rc-req{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.rcard .rc-num{font-family:'Fraunces',Georgia,serif;font-size:48px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.rcard.A .rc-num{color:var(--a)} .rcard.B .rc-num{color:var(--b)} .rcard.C .rc-num{color:var(--c)}
+.rcard .rc-unit{font-size:13px;color:var(--ink2);margin-top:4px}
+.rcard .rc-foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--hair);font-size:13px;color:var(--ink2);line-height:1.5}
+.rcard .rc-foot b{color:var(--ink)}
+@media(max-width:880px){.reabasto-hero{grid-template-columns:1fr;gap:18px;padding:32px}.reabasto-hero .rh-num{font-size:84px}.rcards{grid-template-columns:1fr}}
+@media(max-width:880px){.alert-flow,.atypes{grid-template-columns:1fr}.mrow{flex-wrap:wrap;gap:8px}}
+footer{padding:40px 0 60px;color:var(--slate);font-size:12px;border-top:1px solid var(--hair)}
+@media(max-width:880px){.signature{grid-template-columns:1fr;gap:28px}.kpis{grid-template-columns:repeat(2,1fr)}.cols,.cols-3,.steps{grid-template-columns:1fr}.hero h1{font-size:34px}.sig-num{font-size:84px}}
+@media print{section{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand">IPL ZLC &nbsp;/&nbsp; <span>OPERACIONES</span></div>
+  <div class="meta">Propuesta operativa<br>Reabastecimiento de productos Tipo A</div>
+</div></div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Pendiente por pick · Análisis ABC</div>
+  <h1>El <b>68%</b> de lo que falta despachar es producto Tipo A.<br>Casi la mitad está en altura, frenando el picking.</h1>
+  <p class="lede">Este análisis cruza las líneas pendientes de los pedidos GOO con la clasificación ABC de rotación. El hallazgo es claro: el inventario de mayor rotación es el que más espera, y lo hace en posiciones de altura que obligan a un movimiento extra antes de poder tomarse.</p>
+
+  <div class="signature">
+    <div>
+      <div class="sig-num tnum" id="sigNum">1.324</div>
+      <div class="sig-label">unidades Tipo A esperando en altura</div>
+      <div class="sig-sub">Producto de alta rotación ubicado en mezzanine y rack, no en la posición de picking. Cada una exige un reabasto manual antes de despacharse.</div>
+      <div class="sig-pills">
+        <div class="p"><b id="pPctA">38%</b> del Tipo A pendiente</div>
+        <div class="p"><b id="pSkus">359</b> SKUs distintos</div>
+        <div class="p"><b id="pPedidos">12</b> pedidos afectados</div>
+      </div>
+    </div>
+    <div class="flow" id="flowSvg"></div>
+  </div>
+</header>
+
+<section id="situacion">
+  <div class="sec-head"><span class="sec-no">01</span><h2>Situación actual</h2></div>
+  <p class="sec-intro">Foto del pendiente por pick al momento del análisis: volúmenes totales y cómo se reparten entre las categorías de rotación.</p>
+  <div class="kpis" id="kpiRow"><div class="kpi "><div class="v tnum">5.145</div><div class="l">Unidades pendientes</div><div class="d">2.011 líneas · 13 pedidos</div></div><div class="kpi accent"><div class="v tnum">3.523</div><div class="l">Son Tipo A</div><div class="d">68% del pendiente total</div></div><div class="kpi "><div class="v tnum">2.725</div><div class="l">A piso (BINS)</div><div class="d">53% listo para tomar</div></div><div class="kpi "><div class="v tnum">2.420</div><div class="l">En altura</div><div class="d">47% requiere reabasto</div></div></div>
+  <div class="cols" style="margin-top:24px">
+    <div class="panel"><h3>Unidades pendientes por tipo de rotación</h3><div class="ph">El Tipo A domina el pendiente.</div><div class="cw"><svg viewBox="0 0 440 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="38" y1="19" x2="432" y2="19" stroke="#eef1f3"/><text x="32" y="23" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">3.523</text><line x1="38" y1="64" x2="432" y2="64" stroke="#eef1f3"/><text x="32" y="68" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">2.642</text><line x1="38" y1="108" x2="432" y2="108" stroke="#eef1f3"/><text x="32" y="112" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">1.762</text><line x1="38" y1="152" x2="432" y2="152" stroke="#eef1f3"/><text x="32" y="156" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">881</text><line x1="38" y1="197" x2="432" y2="197" stroke="#eef1f3"/><text x="32" y="201" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">0</text><rect x="38" y="19" width="109" height="178" rx="6" fill="#c8412b"/><text x="93" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo A</text><rect x="165" y="144" width="109" height="53" rx="6" fill="#d99a2b"/><text x="220" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo B</text><rect x="293" y="168" width="109" height="29" rx="6" fill="#3f8f6e"/><text x="347" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo C</text></svg></div></div>
+    <div class="panel"><h3>¿Dónde está ese inventario?</h3><div class="ph">Piso = listo para tomar · Altura = requiere reabasto.</div><div class="cw"><svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><path d="M150.0,30.0 A80,80 0 1 1 135.2,188.6 L140.7,159.1 A50,50 0 1 0 150.0,60.0 Z" fill="#1d6fb8"/><path d="M135.2,188.6 A80,80 0 0 1 150.0,30.0 L150.0,60.0 A50,50 0 0 0 140.7,159.1 Z" fill="#c8412b"/><rect x="30" y="212" width="11" height="11" rx="2" fill="#1d6fb8"/><text x="46" y="222" font-family="Inter,sans-serif" font-size="12" fill="#475560">A piso (listo)</text><rect x="160" y="212" width="11" height="11" rx="2" fill="#c8412b"/><text x="176" y="222" font-family="Inter,sans-serif" font-size="12" fill="#475560">En altura</text></svg></div></div>
+  </div>
+</section>
+
+<section id="problema">
+  <div class="sec-head"><span class="sec-no">02</span><h2>El cuello de botella</h2></div>
+  <p class="sec-intro">Cuando se cruza rotación contra tipo de ubicación, el problema se concentra en una sola celda: el Tipo A en altura. Es el bloque más grande del pendiente y el que más trabajo extra genera.</p>
+  <div class="cols">
+    <div class="panel"><h3>Rotación por ubicación</h3><div class="ph">Cada barra separa lo que está a piso de lo que está en altura.</div><div class="cw tall"><svg viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="44" y1="22" x2="432" y2="22" stroke="#eef1f3"/><text x="38" y="26" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">3.523</text><line x1="44" y1="78" x2="432" y2="78" stroke="#eef1f3"/><text x="38" y="82" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">2.642</text><line x1="44" y1="135" x2="432" y2="135" stroke="#eef1f3"/><text x="38" y="139" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">1.762</text><line x1="44" y1="192" x2="432" y2="192" stroke="#eef1f3"/><text x="38" y="196" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">881</text><line x1="44" y1="248" x2="432" y2="248" stroke="#eef1f3"/><text x="38" y="252" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">0</text><rect x="44" y="107" width="103" height="141" rx="4" fill="#1d6fb8"/><rect x="44" y="22" width="103" height="85" rx="4" fill="#c8412b"/><text x="95" y="288" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo A</text><rect x="169" y="218" width="103" height="30" rx="4" fill="#1d6fb8"/><rect x="169" y="181" width="103" height="37" rx="4" fill="#c8412b"/><text x="220" y="288" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo B</text><rect x="293" y="244" width="103" height="4" rx="4" fill="#1d6fb8"/><rect x="293" y="211" width="103" height="34" rx="4" fill="#c8412b"/><text x="345" y="288" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo C</text></svg></div></div>
+    <div class="panel">
+      <h3>Matriz de cobertura</h3><div class="ph">Unidades por tipo y ubicación.</div>
+      <table class="mtable"><thead><tr><th>Tipo</th><th>Piso</th><th>Altura</th><th>Total</th><th>% a piso</th></tr></thead><tbody id="matrixBody"><tr><td><span class="chip A">A</span></td><td>2.199</td><td>1.324</td><td>3.523</td><td><span class="minibar" style="width:34px"></span>62%</td></tr><tr><td><span class="chip B">B</span></td><td>471</td><td>571</td><td>1.042</td><td><span class="minibar" style="width:25px"></span>45%</td></tr><tr><td><span class="chip C">C</span></td><td>55</td><td>525</td><td>580</td><td><span class="minibar" style="width:5px"></span>9%</td></tr><tr><td>TOTAL</td><td>2.725</td><td>2.420</td><td>5.145</td><td>53%</td></tr></tbody></table>
+    </div>
+  </div>
+</section>
+
+<section id="oid">
+  <div class="sec-head"><span class="sec-no">03</span><h2>Cobertura de piso por pedido (OID)</h2></div>
+  <p class="sec-intro">Qué porcentaje de cada pedido ya tiene sus unidades en posiciones de piso (MEZZANINE BINS), listas para tomar sin subir a altura. Mientras más alto el porcentaje, más ágil el picking de ese pedido.</p>
+
+  <div class="oid-global">
+    <div class="og-big tnum" id="oidGlobal">53%</div>
+    <div class="og-txt">de las unidades pendientes ya están en piso, sumando todos los pedidos. Cada barra abajo muestra la cobertura individual de cada OID.</div>
+  </div>
+
+  <div class="oid-head"><span>OID</span><span>Pedido · cobertura de piso</span><span>Cobertura</span><span style="text-align:right">Uds. piso/total</span><span style="text-align:right">%</span></div>
+  <div class="oidlist" id="oidList"><div class="oidrow"><span class="oid-id">31813</span><span class="oid-name">T ESCAZU<small>GOO4300</small></span><span class="oid-track"><span class="oid-fill" style="width:100.0%;background:#3f8f6e"></span></span><span class="oid-units"><b>15</b> / 15</span><span class="oid-pct" style="color:#3f8f6e">100%</span></div><div class="oidrow"><span class="oid-id">31802</span><span class="oid-name">ALBROOK<small>GOO4286</small></span><span class="oid-track"><span class="oid-fill" style="width:75.7%;background:#3f8f6e"></span></span><span class="oid-units"><b>174</b> / 230</span><span class="oid-pct" style="color:#3f8f6e">75,7%</span></div><div class="oidrow"><span class="oid-id">31806</span><span class="oid-name">MULTIPLAZA<small>GOO4290</small></span><span class="oid-track"><span class="oid-fill" style="width:70.3%;background:#3f8f6e"></span></span><span class="oid-units"><b>215</b> / 306</span><span class="oid-pct" style="color:#3f8f6e">70,3%</span></div><div class="oidrow"><span class="oid-id">31801</span><span class="oid-name">ALBROOK<small>GOO4285</small></span><span class="oid-track"><span class="oid-fill" style="width:70.0%;background:#3f8f6e"></span></span><span class="oid-units"><b>208</b> / 297</span><span class="oid-pct" style="color:#3f8f6e">70%</span></div><div class="oidrow"><span class="oid-id">31816</span><span class="oid-name">T MULTIMARCAS<small>GOO4303</small></span><span class="oid-track"><span class="oid-fill" style="width:61.1%;background:#3f8f6e"></span></span><span class="oid-units"><b>77</b> / 126</span><span class="oid-pct" style="color:#3f8f6e">61,1%</span></div><div class="oidrow"><span class="oid-id">31799</span><span class="oid-name">ALBROOK<small>GOO4283</small></span><span class="oid-track"><span class="oid-fill" style="width:54.5%;background:#1d6fb8"></span></span><span class="oid-units"><b>961</b> / 1.764</span><span class="oid-pct" style="color:#1d6fb8">54,5%</span></div><div class="oidrow"><span class="oid-id">31797</span><span class="oid-name">METRO<small>GOO4293</small></span><span class="oid-track"><span class="oid-fill" style="width:54.2%;background:#1d6fb8"></span></span><span class="oid-units"><b>206</b> / 380</span><span class="oid-pct" style="color:#1d6fb8">54,2%</span></div><div class="oidrow"><span class="oid-id">31809</span><span class="oid-name">MULTIPLAZA<small>GOO4297</small></span><span class="oid-track"><span class="oid-fill" style="width:50.0%;background:#1d6fb8"></span></span><span class="oid-units"><b>170</b> / 340</span><span class="oid-pct" style="color:#1d6fb8">50%</span></div><div class="oidrow"><span class="oid-id">31794</span><span class="oid-name">AEROPUERTO<small>GOO4294</small></span><span class="oid-track"><span class="oid-fill" style="width:47.7%;background:#1d6fb8"></span></span><span class="oid-units"><b>112</b> / 235</span><span class="oid-pct" style="color:#1d6fb8">47,7%</span></div><div class="oidrow"><span class="oid-id">31812</span><span class="oid-name">TIENDAS MARESTY<small>GOO4299</small></span><span class="oid-track"><span class="oid-fill" style="width:47.5%;background:#1d6fb8"></span></span><span class="oid-units"><b>125</b> / 263</span><span class="oid-pct" style="color:#1d6fb8">47,5%</span></div><div class="oidrow"><span class="oid-id">31810</span><span class="oid-name">ALBROOK<small>GOO4298</small></span><span class="oid-track"><span class="oid-fill" style="width:45.7%;background:#1d6fb8"></span></span><span class="oid-units"><b>211</b> / 462</span><span class="oid-pct" style="color:#1d6fb8">45,7%</span></div><div class="oidrow"><span class="oid-id">31798</span><span class="oid-name">ALBROOK<small>GOO4281</small></span><span class="oid-track"><span class="oid-fill" style="width:36.4%;background:#d99a2b"></span></span><span class="oid-units"><b>128</b> / 352</span><span class="oid-pct" style="color:#d99a2b">36,4%</span></div><div class="oidrow"><span class="oid-id">31808</span><span class="oid-name">MULTIPLAZA<small>GOO4292</small></span><span class="oid-track"><span class="oid-fill" style="width:32.8%;background:#c8412b"></span></span><span class="oid-units"><b>123</b> / 375</span><span class="oid-pct" style="color:#c8412b">32,8%</span></div></div>
+</section>
+
+<section id="caso">
+  <div class="case">
+    <div class="eyebrow">La propuesta</div>
+    <h2>Reabastecer el Tipo A primero: bajar lo que más rota a la posición de pick.</h2>
+    <div class="steps">
+      <div class="step"><div class="stepn">PASO 1</div><h4>Priorizar por rotación</h4><p>Atacar primero los SKUs Tipo A en altura: son los de mayor demanda y los que aparecen una y otra vez en los pedidos.</p></div>
+      <div class="step"><div class="stepn">PASO 2</div><h4>Reabastecer a piso</h4><p>Mover esas unidades de mezzanine y rack a la posición de picking, eliminando el viaje a altura en cada orden.</p></div>
+      <div class="step"><div class="stepn">PASO 3</div><h4>Acelerar el despacho</h4><p>Con el Tipo A a piso, el picker toma directo. Menos recorridos, menos espera y pedidos completos antes.</p></div>
+    </div>
+    <div class="outcome">
+      <div><div class="v tnum" id="oUnd">1.324</div><div class="l">unidades A que pasan a estar listas para tomar</div></div>
+      <div><div class="v tnum" id="oPct">26%</div><div class="l">del pendiente total que se destraba</div></div>
+      <div><div class="v tnum" id="oPed">12</div><div class="l">pedidos GOO con avance inmediato</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="reabasto">
+  <div class="sec-head"><span class="sec-no">04</span><h2>Pendiente por mover a piso (MEZZANINE BINS)</h2></div>
+  <p class="sec-intro">Más allá del pendiente por pick, el inventario completo de la marca tiene un estándar de cobertura en piso: cada producto A debe tener 2 cajas en BINS, cada B una caja, y los C viven en altura. Este es el conteo de cajas (CID) que faltan por bajar para cumplirlo.</p>
+
+  <div class="reabasto-hero">
+    <div class="rh-num tnum" id="rTotal">3.445</div>
+    <div class="rh-txt">
+      <div class="rh-lead">cajas deben bajarse a piso para que A y B cumplan su cobertura de picking.</div>
+      <div class="rh-sub">Suma de productos Tipo A (2 cajas c/u) y Tipo B (1 caja c/u). El cálculo prioriza bajar las cajas con más unidades disponibles en altura. Análisis sobre 16.850 líneas de inventario de la marca.</div>
+    </div>
+  </div>
+
+  <div class="rcards">
+    <div class="rcard A">
+      <div class="rc-hd"><span class="rc-chip">A</span><span class="rc-req">Estándar · 2 cajas en piso</span></div>
+      <div class="rc-num tnum" id="rA">2.005</div>
+      <div class="rc-unit">cajas (CID) por bajar a BINS</div>
+      <div class="rc-foot"><b>2.412</b> productos A incompletos · <b>1.230</b> sin ninguna caja en piso · <b>703</b> ya cumplen</div>
+    </div>
+    <div class="rcard B">
+      <div class="rc-hd"><span class="rc-chip">B</span><span class="rc-req">Estándar · 1 caja en piso</span></div>
+      <div class="rc-num tnum" id="rB">1.440</div>
+      <div class="rc-unit">cajas (CID) por bajar a BINS</div>
+      <div class="rc-foot"><b>1.455</b> productos B sin su caja en piso · <b>1.090</b> ya cumplen</div>
+    </div>
+    <div class="rcard C">
+      <div class="rc-hd"><span class="rc-chip">C</span><span class="rc-req">Estándar · todo en altura</span></div>
+      <div class="rc-num tnum" id="rC">150</div>
+      <div class="rc-unit">cajas fuera de altura por corregir</div>
+      <div class="rc-foot"><b>75</b> en piso + <b>71</b> en paleta + <b>4</b> sin ubicación · <b>2.932</b> ya cumplen</div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:24px">
+    <div class="panel"><h3>Cajas por bajar a piso por tipo</h3><div class="ph">El grueso del reabastecimiento es Tipo A y B.</div><div class="cw"><svg viewBox="0 0 440 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="38" y1="19" x2="432" y2="19" stroke="#eef1f3"/><text x="32" y="23" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">2.005</text><line x1="38" y1="64" x2="432" y2="64" stroke="#eef1f3"/><text x="32" y="68" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">1.504</text><line x1="38" y1="108" x2="432" y2="108" stroke="#eef1f3"/><text x="32" y="112" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">1.002</text><line x1="38" y1="152" x2="432" y2="152" stroke="#eef1f3"/><text x="32" y="156" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">501</text><line x1="38" y1="197" x2="432" y2="197" stroke="#eef1f3"/><text x="32" y="201" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">0</text><rect x="38" y="19" width="109" height="178" rx="6" fill="#c8412b"/><text x="93" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo A</text><rect x="165" y="69" width="109" height="128" rx="6" fill="#d99a2b"/><text x="220" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo B</text><rect x="293" y="184" width="109" height="13" rx="6" fill="#3f8f6e"/><text x="347" y="234" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Tipo C</text></svg></div></div>
+    <div class="panel">
+      <h3>Cobertura del estándar</h3><div class="ph">Productos que ya cumplen vs. los que faltan por completar.</div>
+      <table class="mtable"><thead><tr><th>Tipo</th><th>Requerido</th><th>Cumplen</th><th>Por completar</th><th>Cajas faltan</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip A">A</span></td><td>2 en piso</td><td>703</td><td>2.412</td><td>2.005</td></tr>
+        <tr><td><span class="chip B">B</span></td><td>1 en piso</td><td>1.090</td><td>1.455</td><td>1.440</td></tr>
+        <tr><td><span class="chip C">C</span></td><td>0 (altura)</td><td>2.932</td><td>124</td><td>150</td></tr>
+        <tr><td>TOTAL</td><td>—</td><td>4.725</td><td>3.991</td><td>3.595</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <div class="corrida">
+    <div class="co-txt">
+      <h3>Una ubicación por corrida: cada talla en su sitio</h3>
+      <p>Como parte de esta mejora, cada <b>corrida de producto</b> (todas las tallas de un mismo estilo y color) tiene una ubicación asignada, para que todas sus tallas queden juntas en la misma posición. Al reabastecer, las cajas que se bajen deben colocarse en la ubicación que le corresponde a esa corrida.</p>
+      <p>Hoy una misma corrida aparece dispersa en varias posiciones, lo que obliga al picker a recorrer la bodega para completar un solo estilo. Consolidarla en una ubicación <b>reduce el número de posiciones que se visitan por pedido</b> y vuelve el picking más corto y directo.</p>
+    </div>
+    <div class="co-stat">
+      <div class="cs-row"><span class="cs-big tnum cs-from">1.142</span><span class="cs-arrow">→</span><span class="cs-big tnum cs-to">579</span></div>
+      <div class="cs-lbl">posiciones visitadas en el pendiente, si cada corrida vive en una sola ubicación</div>
+      <span class="cs-cut">−49% de ubicaciones</span>
+    </div>
+  </div>
+
+  <div class="eq-note">
+    <span style="font-family:'Roboto Mono',monospace;color:var(--a);font-weight:500">↳</span>
+    <div><b>El problema hoy:</b> de 579 corridas en el pendiente, 245 están repartidas en más de una ubicación — 3,3 posiciones en promedio, y una sola corrida (una KONOS ELEVATE™) llega a estar en 11 lugares distintos. Asignar una ubicación fija por corrida y reabastecer siempre hacia ella es lo que destraba ese recorrido.</div>
+  </div>
+</section>
+
+<section id="avance">
+  <div class="sec-head"><span class="sec-no">05</span><h2>Avance del reabastecimiento</h2></div>
+  <p class="sec-intro">Comparación de las cajas que faltan por bajar a piso entre el corte anterior y el actual. Menos cajas pendientes significa que el inventario ya está más cerca de cumplir su cobertura de picking.</p>
+
+  <div class="cumpl">
+    <div class="cu-top">
+      <div class="cu-title">Cumplimiento del estándar · cajas A+B en BINS</div>
+      <div class="cu-big">51,6<span>%</span></div>
+    </div>
+    <div class="cu-bar"><div class="cu-fill" style="width:51.6%"></div></div>
+    <div class="cu-sub"><b>3.678</b> de <b>7.123</b> cajas requeridas ya están en piso. Faltan <b>3.445</b> para llegar al 100% del estándar (2 cajas por producto A, 1 por producto B).</div>
+    <div class="cu-types">
+      <div class="cu-t"><div class="cu-tv">56,3%</div><div class="cu-tl">Tipo A cumplido</div></div>
+      <div class="cu-t"><div class="cu-tv">43,1%</div><div class="cu-tl">Tipo B cumplido</div></div>
+    </div>
+  </div>
+
+  <div class="avance-cards">
+    <div class="avcard A">
+      <div class="av-hd"><span class="av-chip">A</span><span class="av-lbl">Cajas por bajar · Tipo A</span></div>
+      <div class="av-row"><span class="av-from tnum">2.005</span><span class="av-arrow">→</span><span class="av-to tnum">2.005</span></div>
+      <div class="av-unit">cajas (CID) pendientes a BINS</div>
+      <span class="av-delta ">0 cajas · 0%</span>
+    </div>
+    <div class="avcard B">
+      <div class="av-hd"><span class="av-chip">B</span><span class="av-lbl">Cajas por bajar · Tipo B</span></div>
+      <div class="av-row"><span class="av-from tnum">1.440</span><span class="av-arrow">→</span><span class="av-to tnum">1.440</span></div>
+      <div class="av-unit">cajas (CID) pendientes a BINS</div>
+      <span class="av-delta ">0 cajas · 0%</span>
+    </div>
+    <div class="avcard tot">
+      <div class="av-hd"><span class="av-chip">A+B</span><span class="av-lbl">Total a reabastecer</span></div>
+      <div class="av-row"><span class="av-from tnum">3.445</span><span class="av-arrow">→</span><span class="av-to tnum">3.445</span></div>
+      <div class="av-unit">cajas (CID) pendientes a BINS</div>
+      <span class="av-delta ">0 cajas · 0%</span>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:24px">
+    <h3>Detalle del avance por tipo</h3>
+    <div class="ph">Cajas pendientes por bajar a BINS · corte anterior vs. actual.</div>
+    <table class="avance-table">
+      <thead><tr><th>Tipo</th><th>Estándar</th><th>Antes</th><th>Ahora</th><th>Diferencia</th><th>Variación</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip A">A</span></td><td>2 cajas en piso</td><td>2.005</td><td>2.005</td><td class="">0</td><td class="">0%</td></tr>
+        <tr><td><span class="chip B">B</span></td><td>1 caja en piso</td><td>1.440</td><td>1.440</td><td class="">0</td><td class="">0%</td></tr>
+        <tr><td><span class="chip C">C</span></td><td>fuera de altura</td><td>150</td><td>150</td><td class="">0</td><td class="">0%</td></tr>
+        <tr><td>TOTAL A+B</td><td>—</td><td>3.445</td><td>3.445</td><td class="">0</td><td class="">0%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="proy-wait"><span class="pw-ico">⧗</span><div class="pw-txt"><b>Proyección de tiempo:</b> se calculará automáticamente cuando exista un segundo corte con avance. El generador guarda la fecha de cada corrida; en la próxima que cargues datos nuevos, medirá el ritmo real (cajas bajadas ÷ días transcurridos) y estimará la fecha de llegada al 100%.</div></div>
+
+  <div class="eq-note">
+    <span style="font-family:'Roboto Mono',monospace;color:var(--a);font-weight:500">↳</span>
+    <div><b>Lectura del avance:</b> entre cortes, el pendiente de reabastecimiento A+B bajó en <b>0 cajas</b>, y el cumplimiento global del estándar va en <b>51,6%</b>. El Tipo C pasó de 150 a 150 cajas fuera de altura (0): son productos C en posiciones que no les corresponden y deben devolverse a RACK — el detalle de cada SKU está identificado para su corrección. La comparación se hace sobre los totales de cada corte; un seguimiento producto a producto permitiría separar el reabastecimiento real de los cambios propios del inventario.</div>
+  </div>
+</section>
+
+<section id="impacto">
+  <div class="sec-head"><span class="sec-no">06</span><h2>El impacto de la mejora</h2></div>
+  <p class="sec-intro">Qué cambia el día que el Tipo A y la caja de cada B están a piso. Todo lo que sigue sale de las mismas líneas del análisis — sin estimaciones de tiempo, solo el movimiento real de inventario que se destraba.</p>
+
+  <div class="impact-hero">
+    <div class="ba-side before">
+      <div class="ba-tag">Hoy</div>
+      <div class="ba-big tnum">53<span style="font-size:34px">%</span></div>
+      <div class="ba-cap">del pendiente está listo para tomar. El resto espera en altura y exige un reabasto antes de despacharse.</div>
+      <div class="ba-track"><div class="ba-fill" style="width:53.0%"></div></div>
+      <div class="ba-legend"><span><i style="background:var(--piso)"></i>A piso (listo)</span><span><i style="background:#dfe5e9"></i>En altura</span></div>
+    </div>
+    <div class="ba-side after">
+      <div class="ba-tag">Con A y B reabastecidos</div>
+      <div class="ba-big tnum" id="impAfterPct">89<span style="font-size:34px">%</span></div>
+      <div class="ba-cap">listo para tomar directo. Solo queda en altura la reserva de baja rotación.</div>
+      <div class="ba-track"><div class="ba-fill" id="impAfterBar" style="width:89%"></div></div>
+      <div class="ba-legend"><span><i style="background:var(--piso)"></i>A piso (listo)</span><span><i style="background:#dfe5e9"></i>En altura</span></div>
+    </div>
+  </div>
+
+  <div class="impact-cards">
+    <div class="icard">
+      <div class="iv tnum" id="impToques">359</div>
+      <div class="il">Toques de reabasto eliminados</div>
+      <div class="id">Cada SKU Tipo A en altura es un destino de reabasto. Al bajarlos, esos viajes desaparecen del flujo de cada pedido.</div>
+    </div>
+    <div class="icard">
+      <div class="iv tnum"><span id="impAltRed">77</span>%</div>
+      <div class="il">Menos inventario en altura</div>
+      <div class="id">La altura pasa de 2.420 a 560 unidades: solo quedan 35 de B (lo que excede 1 caja) y 525 de C, que por estándar viven arriba. Esas 560 unidades se concentran en 105 ubicaciones, así que sacarlas cuesta apenas 105 recorridos (5,3 uds. por viaje en promedio).</div>
+    </div>
+    <div class="icard">
+      <div class="iv tnum" id="impPedidos">12</div>
+      <div class="il">de 13 pedidos GOO con avance inmediato</div>
+      <div class="id">Casi todos los pedidos en cola tienen Tipo A esperando en altura. Reabastecerlo les abre paso al despacho de una vez.</div>
+    </div>
+  </div>
+
+  <div class="impact-cards" style="margin-top:24px">
+    <div class="icard">
+      <div class="iv tnum"><span id="impAcuPct">38</span>%</div>
+      <div class="il">Del Tipo A estaba en altura</div>
+      <div class="id">El inventario de mayor rotación esperaba arriba: 1.324 de 3.523 unidades A. Ese es el bloque que se baja a piso.</div>
+    </div>
+    <div class="icard">
+      <div class="iv tnum"><span id="impDestraba">26</span>%</div>
+      <div class="il">Del pendiente total que se destraba</div>
+      <div class="id">Las 1.324 unidades A en altura son el 25,7% de las 5.145 pendientes. Un solo frente de trabajo mueve buena parte de la cola.</div>
+    </div>
+    <div class="icard">
+      <div class="iv tnum"><span id="impPisoB">2.725</span> <span style="font-size:22px;color:var(--ink2)">→</span> <span id="impPisoA" style="color:var(--piso)">4.585</span></div>
+      <div class="il">Unidades a piso (antes → después)</div>
+      <div class="id">El inventario listo para tomar pasa de 2.725 a 4.585 unidades (1.324 de A más 536 de B que bajan con su caja), sin traer una sola caja desde fuera de la bodega.</div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:24px">
+    <h3>A dónde va el inventario con la mejora</h3>
+    <div class="ph">Las 1.324 unidades A y 536 de B bajan a piso. Arriba solo queda la reserva que sí corresponde: 35 de B y 525 de C, repartidas en 105 ubicaciones (105 recorridos).</div>
+    <div class="cw"><svg viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="44" y1="22" x2="432" y2="22" stroke="#eef1f3"/><text x="38" y="26" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">5.145</text><line x1="44" y1="78" x2="432" y2="78" stroke="#eef1f3"/><text x="38" y="82" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">3.859</text><line x1="44" y1="135" x2="432" y2="135" stroke="#eef1f3"/><text x="38" y="139" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">2.572</text><line x1="44" y1="192" x2="432" y2="192" stroke="#eef1f3"/><text x="38" y="196" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">1.286</text><line x1="44" y1="248" x2="432" y2="248" stroke="#eef1f3"/><text x="38" y="252" font-family="Inter,sans-serif" font-size="11" fill="#475560" text-anchor="end">0</text><rect x="44" y="128" width="165" height="120" rx="4" fill="#1d6fb8"/><rect x="44" y="22" width="165" height="106" rx="4" fill="#c8412b"/><text x="126" y="288" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Hoy</text><rect x="231" y="47" width="165" height="201" rx="4" fill="#1d6fb8"/><rect x="231" y="22" width="165" height="25" rx="4" fill="#c8412b"/><text x="314" y="288" font-family="Inter,sans-serif" font-size="12" fill="#475560" text-anchor="middle">Con la mejora</text></svg></div>
+  </div>
+
+  <div class="eq-note">
+    <span style="font-family:'Roboto Mono',monospace;color:var(--a);font-weight:500">↳</span>
+    <div><b>Dónde rinde más el esfuerzo:</b> 7 de los 13 pedidos concentran el 80% del Tipo A en altura, y los 3 mayores (ALBROOK, MULTIPLAZA, ALBROOK) juntan el 57%. Empezar por ahí destraba el mayor volumen con el menor número de movimientos. Las líneas se agrupan por viaje, así que un solo recorrido a una posición resuelve varias de un golpe.</div>
+  </div>
+</section>
+
+<section id="alertas">
+  <div class="sec-head"><span class="sec-no">07</span><h2>El siguiente paso: alertas automáticas</h2></div>
+  <span class="future-badge">Propuesta · se activa con su aprobación</span>
+  <p class="sec-intro">Bajar el Tipo A a piso resuelve el pendiente de hoy. Para que no se repita, proponemos un sistema que vigile las posiciones de piso y avise por sí solo cuándo reabastecer — antes de que el picker se quede sin stock al alcance.</p>
+
+  <div class="alert-flow">
+    <div class="aflow"><div class="an">PASO 1</div><h4>Vigila</h4><p>El sistema revisa cada producto en posiciones de piso: cuántas cajas tiene y cuántas unidades le quedan.</p></div>
+    <div class="aflow"><div class="an">PASO 2</div><h4>Detecta</h4><p>Cuando un producto cae por debajo de su estándar ABC o de las unidades mínimas, marca la condición.</p></div>
+    <div class="aflow"><div class="an">PASO 3</div><h4>Alerta</h4><p>Genera el aviso indicando el producto y cuántas cajas bajar — dos o una según su tipo.</p></div>
+  </div>
+
+  <div class="trigger">
+    <div class="te">Regla de disparo</div>
+    <div class="tr">La alerta se activa cuando a un producto <b>le faltan cajas</b> frente a su estándar <span class="or">— o —</span> cuando su caja activa baja de <b>10 unidades</b> en piso.</div>
+  </div>
+
+  <div class="atypes">
+    <div class="atype A">
+      <div class="ahd"><span class="achip">A</span><span class="awhen">Si tiene &lt; 2 cajas o &lt; 10 uds.</span></div>
+      <div class="amsg">"Producto A bajo en piso — <b>bajar hasta completar 2 cajas</b>"</div>
+      <div class="aact">Se bajan las cajas con más unidades disponibles en altura.</div>
+    </div>
+    <div class="atype B">
+      <div class="ahd"><span class="achip">B</span><span class="awhen">Si tiene 0 cajas o &lt; 10 uds.</span></div>
+      <div class="amsg">"Producto B bajo en piso — <b>bajar 1 caja</b>"</div>
+      <div class="aact">Se baja la caja con más unidades disponible en altura.</div>
+    </div>
+    <div class="atype C">
+      <div class="ahd"><span class="achip">C</span><span class="awhen">Sin alerta de piso</span></div>
+      <div class="amsg">Su ubicación es la <b>altura (RACK)</b> — no entra al ciclo de alertas.</div>
+      <div class="aact">Solo se controla que no ocupe espacio de piso.</div>
+    </div>
+  </div>
+
+  <div class="mock">
+    <div class="mockbar"><span class="dot"></span> Vista de ejemplo · cómo se vería una alerta</div>
+    <div class="mrow"><span class="mc A">A</span><span class="mp">COL1441671-221-32/30</span><span class="ms">1 caja · 4 uds.</span><span class="ma">→ bajar 2 cajas</span></div>
+    <div class="mrow"><span class="mc B">B</span><span class="mp">COL2154741-010-XS</span><span class="ms">0 cajas en piso</span><span class="ma">→ bajar 1 caja</span></div>
+    <div class="mrow"><span class="mc A">A</span><span class="mp">COL2145431-252-O/S</span><span class="ms">1 caja · 7 uds.</span><span class="ma">→ bajar 1 caja (completar)</span></div>
+  </div>
+  <p class="sec-intro" style="margin-top:14px;margin-bottom:0;font-size:13.5px">Vista ilustrativa de la propuesta. La construcción del sistema de alertas comienza una vez aprobado este plan.</p>
+</section>
+
+<footer><div>Análisis generado a partir de "Pendiente por pick" cruzado con clasificación ABC · IPL ZLC · 2.011 líneas / 5.145 unidades · 13 pedidos GOO.</div></footer>
+
+</div>
+
+
+</body></html>
